@@ -23,6 +23,7 @@ MarkupSafe==2.1.2
 marshmallow==3.19.0
 packaging==23.1
 prompt-toolkit==3.0.38
+psycopg2-binary==2.9.6
 PyJWT==2.6.0
 pytz==2023.3
 redis==4.5.4
