@@ -1,0 +1,46 @@
+# Specify the version for docker-compose.yml
+version: "3.8"
+
+# add the serivces needed (postgres,phppgadmin)
+services:
+  db:
+    container_name: postgres_converter
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4_converter
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "db:pgsql-server"
+
+  redis:
+    container_name: redis_converter
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '7002:6379'
+    command: redis-server
+    volumes:
+      - redis:/data
+
+volumes:
+  db-data:
+  pgadmin-data:
+  redis:
+    driver: local
