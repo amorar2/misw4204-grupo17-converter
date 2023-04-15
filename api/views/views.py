@@ -8,13 +8,13 @@ from ..models import db, User, UserSchema
 user_shema = UserSchema()
 
 class ViewSignIn(Resource):
-
     def post(self):
         new_user = User(
-            name=request.json['name'],
-            password=request.json['password']
+            username=request.json['username'],
+            password=request.json['password'],
+            email=request.json['email'],
         )
-        access_token = create_access_token(identity=request.json['name'])
+        access_token = create_access_token(identity=request.json['email'])
         db.session.add(new_user)
         db.session.commit()
         return {'mensaje': 'Usuario creado correctamente', 'accessToken': access_token}
@@ -33,9 +33,9 @@ class ViewSignIn(Resource):
 
 class ViewLogIn(Resource):
     def post(self):
-        name = request.json['name']
-        password = request.json['password']
+        # username = request.json['username']
         email = request.json['email']
+        password = request.json['password']
         user = User.query.filter_by(
             email=email, password=password).all()
         if user:
