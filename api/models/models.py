@@ -20,7 +20,7 @@ class Task(db.Model):
     extension = db.Column(db.String(50))
     new_extension = db.Column(db.String(50))
     done = db.Column(db.Boolean())
-    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', back_populates='tasks')
 
 
