@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from .models import db
-from .views import ViewSignUp, ViewLogIn, ViewTasks, ViewFiles
+from .views import ViewSignUp, ViewLogIn, ViewTasks, ViewFiles, ViewTask
 
 # import redis
 
@@ -27,6 +27,7 @@ api.add_resource(ViewHelloWorld, '/')
 api.add_resource(ViewSignUp, '/signup')
 api.add_resource(ViewLogIn, '/login')
 api.add_resource(ViewTasks, '/tasks')
+api.add_resource(ViewTask, '/tasks/<int:id_task>')
 api.add_resource(ViewFiles, '/files')
 
 jwt = JWTManager(app)

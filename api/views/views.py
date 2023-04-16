@@ -96,18 +96,20 @@ class ViewTasks(Resource):
 
     @jwt_required()
     def get(self):
-        return task_schema.dump(Task.query.get_or_404())
+        tasks = Task.query.all()
+        return [task_schema.dump(task) for task in tasks]
 
+class ViewTask(Resource):
     @jwt_required()
     def get(self, id_task):
         return task_schema.dump(Task.query.get_or_404(id_task))
 
     @jwt_required()
     def delete(self, id_task):
-        usuario = Task.query.get_or_404(id_task)
-        db.session.delete(usuario)
+        task = Task.query.get_or_404(id_task)
+        db.session.delete(task)
         db.session.commit()
-        return '', 204
+        return {'mensaje': 'Tarea eliminada correactamente'}, 204
 
 
 def allowed_file(file_format):
