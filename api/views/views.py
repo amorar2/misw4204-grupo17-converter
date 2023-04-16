@@ -1,5 +1,8 @@
 import os
 import hashlib
+import datetime
+import time
+import calendar
 from flask_restful import Resource
 from flask import request, send_from_directory
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
@@ -24,7 +27,7 @@ class ViewSignUp(Resource):
             return {'mensaje': 'La contraseña no coinciden'}
 
         encrypted_password = hashlib.md5(
-            request.json["password1"].encode('utf-8')
+            request.json['password1'].encode('utf-8')
         ).hexdigest()
 
         new_user = User(
@@ -77,27 +80,34 @@ class ViewTasks(Resource):
         if file.filename == '':
             return {'mensaje': 'No archivo seleccionado'}
 
-        filename = file.filename or ''
-        file_format = filename.rsplit('.', 1)[1].lower()
+        file_full_name = file.filename or ''
+        file_props = file_full_name.rsplit('.', 1)
+        file_name = file_props[0].lower()
+        file_format = file_props[1].lower()
         if file and allowed_file(file_format):
-            secured_filename = secure_filename(filename)
+            user = User.query.filter_by(username=get_jwt_identity()).first()
+            current_GMT = time.gmtime()
+            time_stamp = calendar.timegm(current_GMT)
+            custom_name = file_name + '_' + str(time_stamp)
+            secured_filename = secure_filename(custom_name + '.' + file_format)
             file.save(os.path.join(UPLOAD_FOLDER, secured_filename))
 
-            user = User.query.filter_by(username=get_jwt_identity()).first()
             new_task = Task(
-                filename=secured_filename,
-                format=file_format,
+                filename=custom_name,
+                format='.' + file_format,
                 new_format=request.form['newFormat'],
                 user_id=user.id
             )
+
             db.session.add(new_task)
             db.session.commit()
-            return {'mensaje': 'Archivo cargado'}
+            return {'mensaje': 'Archivo cargado', 'new_task': task_schema.dump(new_task)}
 
     @jwt_required()
     def get(self):
         tasks = Task.query.all()
         return [task_schema.dump(task) for task in tasks]
+
 
 class ViewTask(Resource):
     @jwt_required()
@@ -117,6 +127,11 @@ def allowed_file(file_format):
 
 
 class ViewFiles(Resource):
-    @jwt_required()
-    def get(self, filename):
+    # @jwt_required()
+    def get(self, id_task):
+        args = request.args
+        task = Task.query.get_or_404(id_task)
+        old = args.get('old', default=False, type=bool)
+        format = task.format if old == True else task.new_format
+        filename = task.filename + format
         return send_from_directory(UPLOAD_FOLDER, filename)

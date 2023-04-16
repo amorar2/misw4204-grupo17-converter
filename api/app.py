@@ -28,6 +28,6 @@ api.add_resource(ViewSignUp, '/signup')
 api.add_resource(ViewLogIn, '/login')
 api.add_resource(ViewTasks, '/tasks')
 api.add_resource(ViewTask, '/tasks/<int:id_task>')
-api.add_resource(ViewFiles, '/files/<string:filename>')
+api.add_resource(ViewFiles, '/files/<int:id_task>')
 
 jwt = JWTManager(app)
