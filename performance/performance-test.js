@@ -10,6 +10,6 @@ export const options = {
 };
 
 export default function () {
-  http.get('https://test.k6.io');
+  http.get('http://127.0.0.1:5001');
   sleep(1);
 }
