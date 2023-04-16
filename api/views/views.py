@@ -1,7 +1,7 @@
 import os
 import hashlib
 from flask_restful import Resource
-from flask import request
+from flask import request, send_from_directory
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
 # from datetime import datetime
@@ -118,5 +118,5 @@ def allowed_file(file_format):
 
 class ViewFiles(Resource):
     @jwt_required()
-    def get(self):
-        pass
+    def get(self, filename):
+        return send_from_directory(UPLOAD_FOLDER, filename)
