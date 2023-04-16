@@ -1,8 +1,14 @@
+import enum
+import datetime
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-
 db = SQLAlchemy()
+
+
+class EnumTipoUsuario(enum.Enum):
+    PROCESSED: str = 'PROCESSED'
+    UPLOADED: str = 'UPLOADED'
 
 
 class User(db.Model):
@@ -15,11 +21,13 @@ class User(db.Model):
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    file = db.Column(db.String(50))
-    extension = db.Column(db.String(50))
-    new_extension = db.Column(db.String(50))
-    done = db.Column(db.Boolean())
+    filename = db.Column(db.String(500))
+    format = db.Column(db.String(50))
+    new_format = db.Column(db.String(50))
+    status = db.Column(db.Enum(EnumTipoUsuario),
+                       default=EnumTipoUsuario.UPLOADED)
+    crated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', back_populates='tasks')
 
@@ -27,7 +35,7 @@ class Task(db.Model):
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
-        # include_relationships = True
+        include_relationships = True
         load_instance = True
 
 
