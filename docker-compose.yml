@@ -41,7 +41,21 @@ services:
     command: redis-server
     volumes:
       - redis:/data
-
+  web-celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stop_signal: SIGINT
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
+    volumes:
+      - ./api:/app/api
+      - web-celery:/app/files
+    entrypoint: [ "celery", "-A", "api.tasks.tasks", "worker", "--loglevel=INFO" ]
   web:
     build:
       context: .
@@ -57,6 +71,7 @@ services:
       - redis
     volumes:
       - ./api:/app/api
+      - web-celery:/app/files
     entrypoint: [ "flask", "run", "--host=0.0.0.0", "-p 5001" ]
     # entrypoint: ["tail", "-f", "/dev/null"]
 
@@ -84,6 +99,7 @@ services:
       - ./grafana:/etc/grafana/provisioning/
 
 volumes:
+  web-celery:
   db-data:
   pgadmin-data:
   redis:

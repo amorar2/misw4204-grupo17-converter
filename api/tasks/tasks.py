@@ -5,7 +5,7 @@ from ..utils import convert_targz_to_zip, convert_tarbz2_to_zip
 
 celery_app = Celery(__name__, broker='redis://redis:6379/0')
 
-FILE_FOLDER = 'files'
+FILE_FOLDER = 'files/'
 
 
 def get_filename(file_name, time_stamp, format):
