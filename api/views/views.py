@@ -7,13 +7,12 @@ from flask_restful import Resource
 from flask import request, send_from_directory
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
-# from datetime import datetime
-# from celery import Celery
 from ..models import db, User, Task, UserSchema, TaskSchema
+from ..tasks import register_convert_task
 
 
 ALLOWED_EXTENSIONS = {'zip', '7z', 'tar.gz', 'tar.bz2'}
-UPLOAD_FOLDER = '../files'
+UPLOAD_FOLDER = 'files'
 
 user_schema = UserSchema()
 task_schema = TaskSchema()
@@ -61,8 +60,6 @@ class ViewLogIn(Resource):
         user = User.query.filter_by(
             username=username, password=encrypted_password).all()
         if user:
-            # args = (name, datetime.utcnow())
-            # registrar_log.apply_async(args=args, queue='logs')
             access_token = create_access_token(
                 identity=request.json['username'])
             return {'mensaje': 'Inicio de sesión exitoso', 'accessToken': access_token}, 200
@@ -81,7 +78,7 @@ class ViewTasks(Resource):
             return {'mensaje': 'No archivo seleccionado'}
 
         file_full_name = file.filename or ''
-        file_props = file_full_name.rsplit('.', 1)
+        file_props = file_full_name.split('.', 1)
         file_name = file_props[0].lower()
         file_format = file_props[1].lower()
         if file and allowed_file(file_format):
@@ -101,6 +98,10 @@ class ViewTasks(Resource):
 
             db.session.add(new_task)
             db.session.commit()
+
+            register_convert_task.delay(str(new_task.id), file_name, str(
+                time_stamp), new_task.format, new_task.new_format)
+
             return {'mensaje': 'Archivo cargado', 'new_task': task_schema.dump(new_task)}
 
     @jwt_required()
