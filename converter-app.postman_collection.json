@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "25cf693f-0ca4-4dc2-98f5-5ac61de5290d",
+		"name": "converter-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "hello api",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password1\": \"admin1\",\r\n    \"password2\": \"admin1\",\r\n    \"email\": \"admin1@admin1.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/signup",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTYwMjY2NCwianRpIjoiMTVmZjdmMjEtZDAyYi00ZjQ1LWJhOTktNGM5MzM3MWFhZDFjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNjgxNjAyNjY0LCJleHAiOjE2ODE2MDM1NjR9.lTpmBvsodADm-R6k1PPDgV3gf0RUGF6NRCmrvG7uwjE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"admin1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all tasks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTYxNDM5NSwianRpIjoiZDgyNjk3NmUtY2JlNC00N2M3LWI3YzEtNjZlNDhlZDRlZTY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluNCIsIm5iZiI6MTY4MTYxNDM5NSwiZXhwIjoxNjgxNjE1Mjk1fQ.9__TqrxKuy3_PlST7dF9In8iKpLzw-AHT1nOOymcvao",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/tasks",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get task by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTYxNDM5NSwianRpIjoiZDgyNjk3NmUtY2JlNC00N2M3LWI3YzEtNjZlNDhlZDRlZTY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluNCIsIm5iZiI6MTY4MTYxNDM5NSwiZXhwIjoxNjgxNjE1Mjk1fQ.9__TqrxKuy3_PlST7dF9In8iKpLzw-AHT1nOOymcvao",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/tasks/:id_task",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"tasks",
+						":id_task"
+					],
+					"variable": [
+						{
+							"key": "id_task",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTYxNDM5NSwianRpIjoiZDgyNjk3NmUtY2JlNC00N2M3LWI3YzEtNjZlNDhlZDRlZTY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluNCIsIm5iZiI6MTY4MTYxNDM5NSwiZXhwIjoxNjgxNjE1Mjk1fQ.9__TqrxKuy3_PlST7dF9In8iKpLzw-AHT1nOOymcvao",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/tasks/:id_task",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"tasks",
+						":id_task"
+					],
+					"variable": [
+						{
+							"key": "id_task",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTcwMzE5NywianRpIjoiNWNiYzgyYzctOWJhNi00ZDI3LWJiNWYtZDA3NGRmM2VlMzUxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluMSIsIm5iZiI6MTY4MTcwMzE5NywiZXhwIjoxNjgxNzA0MDk3fQ._QVjzS8L2A5oBQFmIP7NrwFf5rKRnwa7FxabKC7AEQA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/E:/Data/alex/Documents/Maestria/ciclo4/nube/projects/misw4204-grupo17-converter/test_files/user.tar.bz2"
+						},
+						{
+							"key": "newFormat",
+							"value": ".zip",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5001/tasks",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4MTYxOTUzNSwianRpIjoiNzM3ODI4MGYtOGFhZC00Y2M4LWEyZDEtYjEwMTQ4MWUxNGY5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluNCIsIm5iZiI6MTY4MTYxOTUzNSwiZXhwIjoxNjgxNjIwNDM1fQ.d3aoTL7jdhby6LDgnl-te4QWgo6w0ub1d01Oxke6TgI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5001/files/:id_task",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5001",
+					"path": [
+						"files",
+						":id_task"
+					],
+					"query": [
+						{
+							"key": "old",
+							"value": "true",
+							"disabled": true
+						}
+					],
+					"variable": [
+						{
+							"key": "id_task",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
