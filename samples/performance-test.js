@@ -15,7 +15,7 @@ export const options = {
       { duration: '20s', target: 0 },
     ],
 };
-const zipFile = open('/Users/juan.henao/Documents/UNIANDES/web/misw4204-grupo17-converter/test_files/user.tar.bz2', 'b');
+const zipFile = open('../test_files/user.tar.bz2', 'b');
 
 export default function () {
   let res = http.post('http://127.0.0.1:5001/login', JSON.stringify({username: 'admin', password: 'admin'}), {
