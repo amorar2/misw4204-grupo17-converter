@@ -1,6 +1,8 @@
 # Specify the version for docker-compose.yml
 version: "3.8"
-
+networks:
+  k6:
+  grafana:
 # add the serivces needed (postgres,phppgadmin)
 services:
   db:
@@ -57,6 +59,29 @@ services:
       - ./api:/app/api
     entrypoint: [ "flask", "run", "--host=0.0.0.0", "-p 5001" ]
     # entrypoint: ["tail", "-f", "/dev/null"]
+
+  influxdb:
+    image: influxdb:1.8
+    networks:
+      - k6
+      - grafana
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+
+  grafana:
+    image: grafana/grafana:9.3.8
+    networks:
+      - grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/
 
 volumes:
   db-data:
