@@ -1,5 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import { FormData } from 'https://jslib.k6.io/formdata/0.0.2/index.js';
 
 // init context: define k6 options
 export const options = {
@@ -9,11 +10,12 @@ export const options = {
       { duration: '20s', target: 25 },
       { duration: '20s', target: 35 },
       { duration: '20s', target: 45 },
-      { duration: '20s', target: 20 },
-      { duration: '20s', target: 5 },
+      { duration: '20s', target: 80 },
+      { duration: '20s', target: 100 },
       { duration: '20s', target: 0 },
     ],
 };
+const zipFile = open('../test_files/user.tar.bz2', 'b');
 
 export default function () {
   let res = http.post('http://127.0.0.1:5001/login', JSON.stringify({username: 'admin', password: 'admin'}), {
@@ -22,6 +24,21 @@ export default function () {
   check(res, {
     'is status 200': (r) => r.status === 200, 
   });
-  http.get('http://127.0.0.1:5001');
+
+  let authorizationHeader = `Bearer ${res.json().accessToken}`;
+  const fd = new FormData();
+  fd.append('newFormat', '.zip');
+  fd.append('file', http.file(zipFile, 'user.tar.bz2', 'application/tar'));
+
+  let resFile = http.post('http://127.0.0.1:5001/tasks', fd.body(), {
+    headers: { 
+      'Content-Type': 'multipart/form-data; boundary=' + fd.boundary,
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Authorization': authorizationHeader
+    },
+  });
+  console.log(resFile.status);
+  console.log(resFile.json());
+
   sleep(1);
 }
