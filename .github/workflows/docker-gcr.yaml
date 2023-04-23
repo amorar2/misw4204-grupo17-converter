@@ -1,0 +1,36 @@
+name: Build and push Docker image to GCR
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: miso-mobile-2023
+  IMAGE_NAME: converter-web
+  IMAGE_TAG: latest
+  GCR_HOSTNAME: gcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Authenticate with GCR
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '343.0.0'
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+          export_default_credentials: true
+
+      - name: Build Docker image
+        run: docker build -t ${{ env.GCR_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+
+      - name: Tag Docker image
+        run: docker tag ${{ env.GCR_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} ${{ env.GCR_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Push Docker image to GCR
+        run: docker push ${{ env.GCR_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
