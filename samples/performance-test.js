@@ -18,7 +18,8 @@ export const options = {
 const zipFile = open('../test_files/user.tar.bz2', 'b');
 
 export default function () {
-  let res = http.post('http://127.0.0.1:5001/login', JSON.stringify({username: 'admin', password: 'admin'}), {
+  const baseUrl = 'http://34.75.65.39:5001'
+  let res = http.post(`${baseUrl}/login`, JSON.stringify({username: 'admin', password: 'admin'}), {
     headers: { 'Content-Type': 'application/json' },
   } );
   check(res, {
@@ -30,7 +31,7 @@ export default function () {
   fd.append('newFormat', '.zip');
   fd.append('file', http.file(zipFile, 'user.tar.bz2', 'application/tar'));
 
-  let resFile = http.post('http://127.0.0.1:5001/tasks', fd.body(), {
+  let resFile = http.post(`${baseUrl}/tasks`, fd.body(), {
     headers: { 
       'Content-Type': 'multipart/form-data; boundary=' + fd.boundary,
       'Accept-Encoding': 'gzip, deflate, br',
