@@ -2,8 +2,14 @@ import datetime
 from celery import Celery
 from ..utils import convert_targz_to_zip, convert_tarbz2_to_zip
 from ..models import db, Task, EnumStatusType
+import os
 
-celery_app = Celery(__name__, broker='redis://redis:6379/0')
+
+redis_uri = os.environ.get('REDIS_URL')
+if not redis_uri:
+    redis_uri = 'redis://redis:6379/0'
+
+celery_app = Celery(__name__, broker=redis_uri)
 
 FILES_FOLDER = 'files/'
 
