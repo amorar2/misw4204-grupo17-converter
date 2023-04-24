@@ -7,12 +7,14 @@ from flask_restful import Resource
 from flask import request, send_from_directory
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
+
+from api.utils.files import generate_filename, get_filename
 from ..models import db, User, Task, UserSchema, TaskSchema
 from ..tasks import register_convert_task
 
 
 ALLOWED_EXTENSIONS = {'zip', '7z', 'tar.gz', 'tar.bz2'}
-UPLOAD_FOLDER = 'files'
+FILES_FOLDER = 'files'
 
 user_schema = UserSchema()
 task_schema = TaskSchema()
@@ -87,7 +89,7 @@ class ViewTasks(Resource):
             time_stamp = calendar.timegm(current_GMT)
             custom_name = file_name + '_' + str(time_stamp)
             secured_filename = secure_filename(custom_name + '.' + file_format)
-            file.save(os.path.join(UPLOAD_FOLDER, secured_filename))
+            file.save(os.path.join(FILES_FOLDER, secured_filename))
 
             new_task = Task(
                 filename=custom_name,
@@ -118,6 +120,16 @@ class ViewTask(Resource):
     @jwt_required()
     def delete(self, id_task):
         task = Task.query.get_or_404(id_task)
+
+        original_file = FILES_FOLDER + '/' + task.filename + task.format
+        converted_file = FILES_FOLDER + '/' + task.id + '_' + task.filename + task.format
+
+        if os.path.exists(original_file):
+            os.remove(original_file)
+            print("File removed successfully!")
+        else:
+            print("The file does not exist.")
+
         db.session.delete(task)
         db.session.commit()
         return {'mensaje': 'Tarea eliminada correactamente'}, 204
@@ -135,4 +147,4 @@ class ViewFiles(Resource):
         old = args.get('old', default=False, type=bool)
         format = task.format if old == True else task.new_format
         filename = task.filename + format
-        return send_from_directory(UPLOAD_FOLDER, filename)
+        return send_from_directory(FILES_FOLDER, filename)
