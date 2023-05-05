@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "miso-mobile-2023",
+    "private_key_id": "2f729602481f56746f799f854a933a357357e124",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDXmEIDANwT2L3F\nz8iYovfrsSwsXeh860NgiQqoZKMl3kzdmiLrMBjAjIWPY6OMnoa20YGAgvRuQ0n+\nK//LWKNTs6wmoTOtrvBaOy+6wcY8dgsr6tj+kcGLHPpVoAXn3AAkA6PMWbQztCXr\nzWx2F8t1szELQhXn9aV/7J28JWQAN8LXLEsxtaQR3q34ItYPKyjxljmpPrbzx4Rr\nXBRxNFvTQQSQXJQ/hAwIe+in9bn0bF8rwaJcXLcmDv7+Gja04NrPac2GtlJbywmZ\n8apmOyi4lrGt4hLjhy4EQ4eRvoC4ReP+DtPYkysQpVsEe6u5IoVXqe+Q8bLTHyaX\n3u/WOfz1AgMBAAECggEAEYM1LYBG4DfVZnmT3k4ynEsWfv4b0fXcUb2gB4CxPfS6\nQq/wETGleRKREM4zrUr9P2FyRwmcKE6/9m0FiLOJBNYN8E9c3slcjb/MBzwRSbz+\n+FDJ0pftZEr0zLrEcAqPWl2PUxygRijmgap8mnUhWky1eagjFmX+TQ9f2rYg0uGO\nfbokmq5xVtqoIH3hvKxp0yQa7sA/F5g5bjeRyRTfqIx/fOXwnNPG2HzFio98JEeN\n/vpyXBA42ezjOSCoNxHn+iNX4mt30YlmInA21l66gPzh/HNWiKZwDXPFObRMIhQj\nIofzOyeebFZLWrtLH8B8Pt8hGQZHfvGLBFLV0N0c4QKBgQDv9k3jio4UMNIYR5iz\n5jWXl1a/P7/92eiQvYmEGyr8wmkVsfgck+H3uiUhq26NtVnyoWQwAptOX0PoFbC3\nRbmBGizlY2iZUFLd/zD2OIdlYBcpYTNYxx+Sv6TSv7Lx56VytlZX6P0+cHo3C7B9\nvJrQPPeUj+0dJcaTJc1ZJiO6JQKBgQDmAQicXddTOZrIqA0wJrEdGHdOObv+3H6a\n4tcbqmyv28UnFuBFbdIKGTgq3+n8Pb12TQfbTbq6o/EMYC7D2ntVwzdgIWlEJBq5\nz30/B84fKRy8SplgWqIAHYIiFEMbrC/Cr6kC0c1Lb0B7kGj9UYusxI1H1U+slKaN\nurzfrUb2kQKBgAoYPXyWBpYY263DzUu8IoMHDdIr12LRePQl1RQmpG9PqmYMP5jM\nK9RlE0zQTm1NtMP9QB647VmlrlCkIPQEzeH9fOgFf4/7jhDivGePRzrfiPnnqeZR\nMiXVRBTNlbSRfydNPmKiXYzz5GBOcJVJiuW5utyYFWyFe04TaAkZDqW1AoGBAMmX\nRFXRBiZiyeBvMsfuUbQ/umnsvnJ+DdVxVrpf4E0uoZlGOqF/xOWm/wzNHsc/0ex7\nTZSQh0aI5IBFWRe+SfV8We++uQXJY0dSreLt02KKZS4/cDj8lxrkwidefQcnHuFT\nlx3qhzZDt0/V3b+RlouB5pZ8Rw3raCO29U5TEGyRAoGBAKR7IK2i8gMzkvYzVyg1\ncBQFuC0l3lxQo82J+CAnA0qrOjATXbcEyuD/tAtznwym8aX9Imx9KMBBUBkdg7DW\n1m+vojyIDfXX48P8RCC30MfQLj923HChVdtEMsms/hSJJJwuUMCoriA0MKTb0QTL\nl395W77kjp51AaHW7CXcpC29\n-----END PRIVATE KEY-----\n",
+    "client_email": "converter-app@miso-mobile-2023.iam.gserviceaccount.com",
+    "client_id": "110777295002980301321",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/converter-app%40miso-mobile-2023.iam.gserviceaccount.com"
+  }

@@ -4,9 +4,10 @@ import datetime
 import time
 import calendar
 from flask_restful import Resource
-from flask import request, send_from_directory
+from flask import request, send_from_directory, current_app
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
+
 
 from api.utils.files import generate_filename, get_filename
 from ..models import db, User, Task, UserSchema, TaskSchema
@@ -68,7 +69,19 @@ class ViewLogIn(Resource):
         else:
             return {'mensaje': 'Credenciales incorrectas'}, 401
 
-
+class ViewStorage(Resource):
+    @jwt_required()
+    def post(self):           
+        bucket = current_app.config['STORAGE_BUCKET_CLIENT']   
+        file = request.files['file'] 
+        file_full_name = file.filename or ''
+        file.save(os.path.join(FILES_FOLDER, file_full_name))
+        
+        blob = bucket.blob(file_full_name)
+    
+        blob.upload_from_filename(FILES_FOLDER + "/" + file_full_name )
+        return {'mensaje': 'Archivo cargado en cloud-storage'}
+        
 class ViewTasks(Resource):
     @jwt_required()
     def post(self):
@@ -90,6 +103,11 @@ class ViewTasks(Resource):
             custom_name = file_name + '_' + str(time_stamp)
             secured_filename = secure_filename(custom_name + '.' + file_format)
             file.save(os.path.join(FILES_FOLDER, secured_filename))
+
+            ##Guardar en bucket
+            # bucket = current_app.config['STORAGE_BUCKET_CLIENT']
+            # blob = bucket.blob(secured_filename)    
+            # blob.upload_from_filename(FILES_FOLDER + "/" + secured_filename )
 
             new_task = Task(
                 filename=custom_name,

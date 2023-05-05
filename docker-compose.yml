@@ -57,14 +57,14 @@ services:
       - ./api:/app/api
       - web-celery:/app/files
     entrypoint: [ "celery", "-A", "api.tasks.tasks", "worker", "--loglevel=INFO" ]
-  
+
   web:
     build:
       context: .
       dockerfile: Dockerfile
     stop_signal: SIGINT
-    # environment:
-    #   - DATABASE_URL=postgresql://postgres:postgres@34.23.114.143:5432/converter
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./api/converter-app.json
     depends_on:
       - db
       - redis
@@ -73,10 +73,12 @@ services:
     links:
       - db
       - redis
-    volumes:
-      - ./api:/app/api
+    volumes:      
+      - ./api:/app/api      
       - web-celery:/app/files
     entrypoint: [ "flask", "run", "--host=0.0.0.0", "-p 5001" ]
+
+  
     # entrypoint: ["tail", "-f", "/dev/null"]
 
   influxdb:
