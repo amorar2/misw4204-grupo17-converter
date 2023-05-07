@@ -2,8 +2,7 @@
 version: "3.8"
 networks:
   k6:
-  grafana:
-# add the serivces needed (postgres,phppgadmin)
+  grafana: # add the serivces needed (postgres,phppgadmin)
 services:
   db:
     container_name: postgres_converter
@@ -41,12 +40,14 @@ services:
     command: redis-server
     volumes:
       - redis:/data
-  
+
   web-celery:
     build:
       context: .
       dockerfile: Dockerfile
     stop_signal: SIGINT
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./api/converter-app.json
     depends_on:
       - db
       - redis
@@ -56,15 +57,22 @@ services:
     volumes:
       - ./api:/app/api
       - web-celery:/app/files
-    entrypoint: [ "celery", "-A", "api.tasks.tasks", "worker", "--loglevel=INFO" ]
-  
+    entrypoint:
+      [
+        "celery",
+        "-A",
+        "api.tasks.tasks",
+        "worker",
+        "--loglevel=INFO"
+      ]
+
   web:
     build:
       context: .
       dockerfile: Dockerfile
     stop_signal: SIGINT
-    # environment:
-    #   - DATABASE_URL=postgresql://postgres:postgres@34.23.114.143:5432/converter
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=./api/converter-app.json
     depends_on:
       - db
       - redis

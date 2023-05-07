@@ -4,16 +4,16 @@ import datetime
 import time
 import calendar
 from flask_restful import Resource
-from flask import request, send_from_directory
+from flask import request, send_from_directory, current_app, send_file
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
+from io import BytesIO
 
-from api.utils.files import generate_filename, get_filename
-from ..models import db, User, Task, UserSchema, TaskSchema
+from api.utils.files import delete_file_from_folder, allowed_files
+from ..models import db, User, Task, UserSchema, TaskSchema, EnumStatusType
 from ..tasks import register_convert_task
 
 
-ALLOWED_EXTENSIONS = {'zip', '7z', 'tar.gz', 'tar.bz2'}
 FILES_FOLDER = 'files'
 
 user_schema = UserSchema()
@@ -83,16 +83,29 @@ class ViewTasks(Resource):
         file_props = file_full_name.split('.', 1)
         file_name = file_props[0].lower()
         file_format = file_props[1].lower()
-        if file and allowed_file(file_format):
+        if file and allowed_files(file_format):
             user = User.query.filter_by(username=get_jwt_identity()).first()
             current_GMT = time.gmtime()
             time_stamp = calendar.timegm(current_GMT)
             custom_name = file_name + '_' + str(time_stamp)
-            secured_filename = secure_filename(custom_name + '.' + file_format)
-            file.save(os.path.join(FILES_FOLDER, secured_filename))
+            secured_file_name = secure_filename(
+                custom_name + '.' + file_format)
+            temp_path = os.path.join(FILES_FOLDER, secured_file_name)
+            file.save(temp_path)
+
+            # Guardar en bucket
+            bucket = current_app.config['STORAGE_BUCKET_CLIENT']
+            blob = bucket.blob(secured_file_name)
+            blob.upload_from_filename(temp_path)
+
+            if blob.exists():
+                delete_file_from_folder(temp_path)
+            else:
+                print('Upload failed.')
 
             new_task = Task(
-                filename=custom_name,
+                file_name=file_name,
+                custom_name=custom_name,
                 format='.' + file_format,
                 new_format=request.form['newFormat'],
                 user_id=user.id
@@ -115,36 +128,64 @@ class ViewTasks(Resource):
 class ViewTask(Resource):
     @jwt_required()
     def get(self, id_task):
+        print(id_task)
         return task_schema.dump(Task.query.get_or_404(id_task))
 
     @jwt_required()
     def delete(self, id_task):
         task = Task.query.get_or_404(id_task)
+        bucket = current_app.config['STORAGE_BUCKET_CLIENT']
 
-        original_file = FILES_FOLDER + '/' + task.filename + task.format
-        converted_file = FILES_FOLDER + '/' + task.id + '_' + task.filename + task.format
+        original_file = task.custom_name + task.format
+        blob_original = bucket.blob(original_file)
 
-        if os.path.exists(original_file):
-            os.remove(original_file)
-            print("File removed successfully!")
+        if blob_original.exists():
+            blob_original.delete()
         else:
-            print("The file does not exist.")
+            print('File = ' + original_file + ' doesn\'t exist.')
+
+        # if task.status == EnumStatusType.PROCESSED: #TODO
+        converted_file = str(task.id) + '_' + task.file_name + task.new_format
+
+        blob_converted = bucket.blob(converted_file)
+        if blob_converted.exists():
+            blob_converted.delete()
+        else:
+            print('File = ' + converted_file + ' doesn\'t exist.')
 
         db.session.delete(task)
         db.session.commit()
-        return {'mensaje': 'Tarea eliminada correactamente'}, 204
-
-
-def allowed_file(file_format):
-    return file_format in ALLOWED_EXTENSIONS
+        return {'mensaje': 'Tarea eliminada correactamente'}, 200
 
 
 class ViewFiles(Resource):
     # @jwt_required()
     def get(self, id_task):
-        args = request.args
+        old = bool(request.args.get('old', False))
         task = Task.query.get_or_404(id_task)
-        old = args.get('old', default=False, type=bool)
-        format = task.format if old == True else task.new_format
-        filename = task.filename + format
-        return send_from_directory(FILES_FOLDER, filename)
+        bucket = current_app.config['STORAGE_BUCKET_CLIENT']
+
+        if old == True:
+            original_file = task.custom_name + task.format
+            blob = bucket.blob(original_file)
+            file_contents = BytesIO()
+            blob.download_to_file(file_contents)
+            file_contents.seek(0)
+            return send_file(
+                file_contents,
+                download_name=original_file,
+                as_attachment=True
+            )
+
+        else:
+            converted_file = str(task.id) + '_' + \
+                task.file_name + task.new_format
+            blob = bucket.blob(converted_file)
+            file_contents = BytesIO()
+            blob.download_to_file(file_contents)
+            file_contents.seek(0)
+            return send_file(
+                file_contents,
+                download_name=converted_file,
+                as_attachment=True
+            )
