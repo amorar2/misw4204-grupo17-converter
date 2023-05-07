@@ -22,7 +22,8 @@ class User(db.Model):
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(500))
+    file_name = db.Column(db.String(500))
+    custom_name = db.Column(db.String(500))
     format = db.Column(db.String(50))
     new_format = db.Column(db.String(50))
     status = db.Column(db.Enum(EnumStatusType),
