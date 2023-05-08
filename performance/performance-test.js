@@ -16,9 +16,8 @@ export const options = {
     ],
 };
 const zipFile = open('../test_files/user.tar.bz2', 'b');
-
 export default function () {
-  const baseUrl = 'http://34.75.65.39:5001'
+  const baseUrl = 'http://35.243.247.8'
   let res = http.post(`${baseUrl}/login`, JSON.stringify({username: 'admin', password: 'admin'}), {
     headers: { 'Content-Type': 'application/json' },
   } );

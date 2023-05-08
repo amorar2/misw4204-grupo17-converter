@@ -1,0 +1,32 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "flask-celery"
+  namespace: "default"
+  labels:
+    app: "flask-celery"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "flask-celery"
+  template:
+    metadata:
+      labels:
+        app: "flask-celery"
+    spec:
+      containers:
+      - name: "converter-web-sha256-1"
+        image: "gcr.io/miso-mobile-2023/converter-web@sha256:e4258bd5c4ff21aece68131367a1cc4d893574a6db1b9ccec8935db0a02a1a4c"
+        command: [ "celery", "-A", "api.tasks.tasks", "worker", "--loglevel=INFO" ]
+        env:
+        - name: "DATABASE_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "DATABASE_URL"
+              name: "flask-celery-config"
+        - name: "REDIS_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDIS_URL"
+              name: "flask-celery-config"

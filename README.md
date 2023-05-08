@@ -9,6 +9,7 @@
 3. run the tests locally
 
 ```
+  docker-compose up influxdb grafana
   k6 run --out influxdb=http://localhost:8086/k6 ./performance/performance-test.js
 ```
 

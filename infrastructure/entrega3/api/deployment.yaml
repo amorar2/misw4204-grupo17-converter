@@ -1,0 +1,41 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "flask-web"
+  namespace: "default"
+  labels:
+    app: "flask-web"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "flask-web"
+  template:
+    metadata:
+      labels:
+        app: "flask-web"
+    spec:
+      containers:
+      - name: "converter-web-sha256-1"
+        image: "gcr.io/miso-mobile-2023/converter-web@sha256:e4258bd5c4ff21aece68131367a1cc4d893574a6db1b9ccec8935db0a02a1a4c"
+        command: ["flask", "run", "--host=0.0.0.0", "-p", "5001"]
+        ports:
+          - containerPort: 5001
+        env:
+        - name: "DATABASE_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "DATABASE_URL"
+              name: "flask-web-config-bx9q"
+        livenessProbe:
+            httpGet:
+              path: /ping
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 10
