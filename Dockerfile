@@ -2,8 +2,9 @@ FROM python:3.9-alpine
 
 # Create app directory
 WORKDIR /app
-
-# Install app dependencies
+RUN apk update
+RUN apk add --no-cache --virtual .build-deps \
+    linux-headers build-base g++ python3-dev
 COPY requirements.txt ./
 ENV FLASK_APP=/app/api/app.py
 

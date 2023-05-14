@@ -59,11 +59,8 @@ services:
       - web-celery:/app/files
     entrypoint:
       [
-        "celery",
-        "-A",
-        "api.tasks.tasks",
-        "worker",
-        "--loglevel=INFO"
+        "python",
+        "./api/tasks/pubsubTask.py"
       ]
 
   web:
