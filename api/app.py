@@ -4,9 +4,8 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
 from .models import db
-from .views import ViewSignUp, ViewLogIn, ViewTasks, ViewFiles, ViewTask
+from .views import ViewSignUp, ViewLogIn, ViewTasks, ViewFiles, ViewTask, ViewMessages
 
-# import redis
 
 app = create_app('default')
 app_context = app.app_context()
@@ -18,7 +17,6 @@ db.create_all()
 cors = CORS(app)
 
 api = Api(app)
-
 
 class ViewHelloWorld(Resource):
     def get(self):
@@ -38,5 +36,6 @@ api.add_resource(ViewLogIn, '/login')
 api.add_resource(ViewTasks, '/tasks')
 api.add_resource(ViewTask, '/task/<int:id_task>')
 api.add_resource(ViewFiles, '/files/<int:id_task>')
+api.add_resource(ViewMessages, '/messages')
 
 jwt = JWTManager(app)

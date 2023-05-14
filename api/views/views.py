@@ -12,6 +12,8 @@ from io import BytesIO
 from api.utils.files import delete_file_from_folder, allowed_files
 from ..models import db, User, Task, UserSchema, TaskSchema, EnumStatusType
 from ..tasks import register_convert_task
+from ..utils import convert_targz_to_zip, convert_tarbz2_to_zip2
+from ..utils import generate_filename, get_filename
 
 
 FILES_FOLDER = 'files'
@@ -189,3 +191,36 @@ class ViewFiles(Resource):
                 download_name=converted_file,
                 as_attachment=True
             )
+
+
+class ViewMessages(Resource):
+
+    def get(self):
+        BUCKET_NAME = 'converter-storage/'
+        TEMP_FOLDER = 'files/'
+        data = request.json['message']['data']
+
+        task_id = data['task_id']
+        file_name = data['file_name']
+        time_stamp = data['time_stamp']
+        format = data['format']
+        new_format = data['new_format']
+
+        print('taskId=' + task_id + ' - Task register_convert_task starts')
+        print('taskId=' + task_id + ' - Request to convert file: ' + file_name +
+              ' from ' + format + ' to ' + new_format)
+        old_file = BUCKET_NAME + get_filename(file_name, time_stamp, format)
+        new_file = generate_filename(task_id, file_name, new_format)
+
+        print('taskId=' + task_id + ' - Convert starts')
+        if (format == '.tar.gz' and new_format == '.zip'):
+            convert_targz_to_zip(task_id, old_file, new_file)
+        if (format == '.tar.bz2' and new_format == '.zip'):
+            convert_tarbz2_to_zip2(task_id, old_file, new_file)
+        print('taskId=' + task_id + ' - Convert finish')
+        print('taskId=' + task_id + ' - Updating task id: ' + task_id)
+
+        print('taskId=' + task_id + ' - Updated to: ' +
+              str(EnumStatusType.PROCESSED))
+        print('taskId=' + task_id + ' - Task register_convert_task completed')
+        return '', 204  # Return a successful response

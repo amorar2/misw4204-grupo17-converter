@@ -1,5 +1,8 @@
+import logging
 import datetime
+import json
 import os
+from celery import Celery
 from ..utils import convert_targz_to_zip, convert_tarbz2_to_zip2
 from ..utils import generate_filename, get_filename
 from ..models import db, Task, EnumStatusType
@@ -10,9 +13,12 @@ from google.cloud import pubsub_v1
 publisher = pubsub_v1.PublisherClient()
 topic_path = publisher.topic_path('miso-mobile-2023', 'tasks')
 
+BUCKET_NAME = 'converter-storage/'
+TEMP_FOLDER = 'files/'
+
 # Define a callback function to handle incoming messages
 def callback(message):
-    print(f"Received message: {message.data.decode()}")
+    logging.info("Received message: {message.data.decode()}")
     try:
         message_data = message.data.decode()
         message_json = json.loads(message_data)
@@ -45,18 +51,19 @@ def callback(message):
         print('taskId=' + task_id + ' - Updated to: ' +
               str(EnumStatusType.PROCESSED))
         print('taskId=' + task_id + ' - Task register_convert_task completed')
+        message.ack()
         return True
     except:
         return False
     # Acknowledge the message to remove it from the subscription
-    message.ack()
 
-# Subscribe to the topic and start listening for messages
-subscriber = pubsub_v1.SubscriberClient()
-subscription_path = subscriber.subscription_path('miso-mobile-2023', 'tasks-sub')
-subscriber.subscribe(subscription_path, callback=callback)
+def listenForMessages():
+    # Subscribe to the topic and start listening for messages
+    subscriber = pubsub_v1.SubscriberClient()
+    subscription_path = subscriber.subscription_path('miso-mobile-2023', 'tasks-sub')
+    subscriber.subscribe(subscription_path, callback=callback)
 
-# Run the application indefinitely to continuously receive messages
-print("Listening for messages...")
-while True:
-    pass
+    # Run the application indefinitely to continuously receive messages
+    logging.info("Listening for messages...")
+    while True:
+        pass
