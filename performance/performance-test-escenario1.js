@@ -6,13 +6,13 @@ import { FormData } from 'https://jslib.k6.io/formdata/0.0.2/index.js';
 export const options = {
     stages: [
       { duration: '10s', target: 5 },
-      { duration: '20s', target: 15 },
-      { duration: '20s', target: 25 },
-      { duration: '20s', target: 35 },
-      { duration: '20s', target: 45 },
-      { duration: '20s', target: 80 },
-      { duration: '20s', target: 100 },
-      { duration: '20s', target: 0 },
+      { duration: '10', target: 15 },
+      { duration: '10s', target: 25 },
+      { duration: '10s', target: 35 },
+      { duration: '10s', target: 45 },
+      { duration: '10s', target: 100 },
+      { duration: '10s', target: 200 },
+      { duration: '10s', target: 400 },
     ],
 };
 const zipFile = open('../test_files/user.tar.bz2', 'b');

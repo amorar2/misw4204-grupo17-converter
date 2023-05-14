@@ -17,8 +17,15 @@ spec:
     spec:
       containers:
       - name: "converter-web-sha256-1"
-        image: "gcr.io/miso-mobile-2023/converter-web@sha256:e4258bd5c4ff21aece68131367a1cc4d893574a6db1b9ccec8935db0a02a1a4c"
+        image: "gcr.io/miso-mobile-2023/converter-web@sha256:9f6fbae5d8bde0ecb1bce6b80d8b1c3a91fbcd4768fbeefba52717f6815e3b25"
         command: ["flask", "run", "--host=0.0.0.0", "-p", "5001"]
+        resources:
+          limits:
+            cpu: 400m
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
         ports:
           - containerPort: 5001
         env:
@@ -27,15 +34,8 @@ spec:
             configMapKeyRef:
               key: "DATABASE_URL"
               name: "flask-web-config-bx9q"
-        livenessProbe:
-            httpGet:
-              path: /ping
-              port: 5001
-            initialDelaySeconds: 5
-            periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ping
-            port: 5001
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        - name: "GOOGLE_APPLICATION_CREDENTIALS"
+          valueFrom:
+            configMapKeyRef:
+              key: "GOOGLE_APPLICATION_CREDENTIALS"
+              name: "flask-web-config-bx9q"
