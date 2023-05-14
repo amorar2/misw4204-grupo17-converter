@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: "converter-web-sha256-1"
-        image: "gcr.io/miso-mobile-2023/converter-web@sha256:e4258bd5c4ff21aece68131367a1cc4d893574a6db1b9ccec8935db0a02a1a4c"
+        image: "gcr.io/miso-mobile-2023/converter-web@sha256:9f6fbae5d8bde0ecb1bce6b80d8b1c3a91fbcd4768fbeefba52717f6815e3b25"
         command: [ "celery", "-A", "api.tasks.tasks", "worker", "--loglevel=INFO" ]
         env:
         - name: "DATABASE_URL"
@@ -29,4 +29,9 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: "REDIS_URL"
+              name: "flask-celery-config"
+        - name: "GOOGLE_APPLICATION_CREDENTIALS"
+          valueFrom:
+            configMapKeyRef:
+              key: "GOOGLE_APPLICATION_CREDENTIALS"
               name: "flask-celery-config"

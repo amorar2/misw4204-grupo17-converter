@@ -69,7 +69,7 @@ services:
       dockerfile: Dockerfile
     stop_signal: SIGINT
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=./api/converter-app.json
+      - DATABASE_URL=postgresql://postgres:postgres@34.23.114.143:5432/converter
     depends_on:
       - db
       - redis

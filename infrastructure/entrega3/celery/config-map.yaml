@@ -8,3 +8,4 @@ metadata:
 data:
   DATABASE_URL: "postgresql://postgres:postgres@34.23.114.143:5432/converter"
   REDIS_URL: "redis://104.196.15.16:6379/0"
+  GOOGLE_APPLICATION_CREDENTIALS: "./converter-app.json"
