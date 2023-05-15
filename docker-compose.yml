@@ -54,14 +54,13 @@ services:
     links:
       - db
       - redis
+    ports:
+      - '5002:5002'
     volumes:
       - ./api:/app/api
       - web-celery:/app/files
-    entrypoint:
-      [
-        "python",
-        "./api/tasks/pubsubTask.py"
-      ]
+    entrypoint: [ "flask", "run", "--host=0.0.0.0", "-p 5002" ]
+
 
   web:
     build:

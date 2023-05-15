@@ -1,13 +1,17 @@
+import base64
 import os
 import hashlib
 import datetime
 import time
 import calendar
+import json
 from flask_restful import Resource
 from flask import request, send_from_directory, current_app, send_file
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from werkzeug.utils import secure_filename
 from io import BytesIO
+from google.cloud import pubsub_v1
+
 
 from api.utils.files import delete_file_from_folder, allowed_files
 from ..models import db, User, Task, UserSchema, TaskSchema, EnumStatusType
@@ -116,8 +120,30 @@ class ViewTasks(Resource):
             db.session.add(new_task)
             db.session.commit()
 
-            register_convert_task.delay(str(new_task.id), file_name, str(
-                time_stamp), new_task.format, new_task.new_format)
+
+            publisher = pubsub_v1.PublisherClient()
+            topic_name = 'projects/miso-mobile-2023/topics/tasks'
+           
+            json_data = {
+                'task_id': str(new_task.id),
+                'file_name': file_name,
+                'time_stamp': str(time_stamp),
+                'custom_name': custom_name,
+                'format': '.' + file_format,
+                'new_format': request.form['newFormat'],
+                'user_id': user.id
+            }
+
+            # Convert JSON data to bytes
+            message_bytes = json.dumps(json_data).encode('utf-8')
+
+            # Publish the message
+            future = publisher.publish(topic_name, data=message_bytes)
+
+            result = future.result()
+
+            # register_convert_task.delay(str(new_task.id), file_name, str(
+            #    time_stamp), new_task.format, new_task.new_format)
 
             return {'mensaje': 'Archivo cargado', 'new_task': task_schema.dump(new_task)}
 
@@ -195,32 +221,37 @@ class ViewFiles(Resource):
 
 class ViewMessages(Resource):
 
-    def get(self):
-        BUCKET_NAME = 'converter-storage/'
-        TEMP_FOLDER = 'files/'
-        data = request.json['message']['data']
+    def post(self):
+        try:    
+            BUCKET_NAME = 'converter-storage/'
+            TEMP_FOLDER = 'files/'
+            print(request)
+            rawData = request.get_json()['message']['data']
+            data =json.loads(base64.b64decode(rawData).decode('utf-8'))
 
-        task_id = data['task_id']
-        file_name = data['file_name']
-        time_stamp = data['time_stamp']
-        format = data['format']
-        new_format = data['new_format']
+            task_id = data['task_id']
+            file_name = data['file_name']
+            time_stamp = data['time_stamp']
+            format = data['format']
+            new_format = data['new_format']
 
-        print('taskId=' + task_id + ' - Task register_convert_task starts')
-        print('taskId=' + task_id + ' - Request to convert file: ' + file_name +
-              ' from ' + format + ' to ' + new_format)
-        old_file = BUCKET_NAME + get_filename(file_name, time_stamp, format)
-        new_file = generate_filename(task_id, file_name, new_format)
+            print('taskId=' + task_id + ' - Task register_convert_task starts')
+            print('taskId=' + task_id + ' - Request to convert file: ' + file_name +
+                ' from ' + format + ' to ' + new_format)
+            old_file = BUCKET_NAME + get_filename(file_name, time_stamp, format)
+            new_file = generate_filename(task_id, file_name, new_format)
 
-        print('taskId=' + task_id + ' - Convert starts')
-        if (format == '.tar.gz' and new_format == '.zip'):
-            convert_targz_to_zip(task_id, old_file, new_file)
-        if (format == '.tar.bz2' and new_format == '.zip'):
-            convert_tarbz2_to_zip2(task_id, old_file, new_file)
-        print('taskId=' + task_id + ' - Convert finish')
-        print('taskId=' + task_id + ' - Updating task id: ' + task_id)
+            print('taskId=' + task_id + ' - Convert starts')
+            if (format == '.tar.gz' and new_format == '.zip'):
+                convert_targz_to_zip(task_id, old_file, new_file)
+            if (format == '.tar.bz2' and new_format == '.zip'):
+                convert_tarbz2_to_zip2(task_id, old_file, new_file)
+            print('taskId=' + task_id + ' - Convert finish')
+            print('taskId=' + task_id + ' - Updating task id: ' + task_id)
 
-        print('taskId=' + task_id + ' - Updated to: ' +
-              str(EnumStatusType.PROCESSED))
-        print('taskId=' + task_id + ' - Task register_convert_task completed')
-        return '', 204  # Return a successful response
+            print('taskId=' + task_id + ' - Updated to: ' +
+                str(EnumStatusType.PROCESSED))
+            print('taskId=' + task_id + ' - Task register_convert_task completed')
+            return '', 204  # Return a successful response
+        except:
+            return 204
