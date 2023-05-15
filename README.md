@@ -1,5 +1,16 @@
 # misw4204-grupo17-converter
 
+## Local Setup
+This project is able to run in a local environment following the next steps.
+
+
+```bash
+  pyenv install 3.9
+  python -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+```
+## Cloud Setup
 
 
 ## Running performance tests

@@ -1,0 +1,32 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "flask-pubsub"
+  namespace: "default"
+  labels:
+    app: "flask-pubsub"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "flask-pubsub"
+  template:
+    metadata:
+      labels:
+        app: "flask-pubsub"
+    spec:
+      containers:
+      - name: "converter-web-sha256-1"
+        image: "gcr.io/miso-mobile-2023/converter-web:entrega4"
+        command: ["flask", "run", "--host=0.0.0.0", "-p", "5002"]
+        env:
+        - name: "DATABASE_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "DATABASE_URL"
+              name: "flask-pubsub-config"
+        - name: "GOOGLE_APPLICATION_CREDENTIALS"
+          valueFrom:
+            configMapKeyRef:
+              key: "GOOGLE_APPLICATION_CREDENTIALS"
+              name: "flask-pubsub-config"
