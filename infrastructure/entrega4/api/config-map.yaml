@@ -1,0 +1,10 @@
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "flask-web-config-bx9q"
+  namespace: "default"
+  labels:
+    app: "flask-web"
+data:
+  DATABASE_URL: "postgresql://postgres:postgres@34.23.114.143:5432/converter"
+  GOOGLE_APPLICATION_CREDENTIALS: "./converter-app.json"

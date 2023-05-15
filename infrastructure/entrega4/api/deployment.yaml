@@ -1,0 +1,41 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "flask-web"
+  namespace: "default"
+  labels:
+    app: "flask-web"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "flask-web"
+  template:
+    metadata:
+      labels:
+        app: "flask-web"
+    spec:
+      containers:
+      - name: "converter-web-sha256-1"
+        image: "gcr.io/miso-mobile-2023/converter-web:entrega4"
+        command: ["flask", "run", "--host=0.0.0.0", "-p", "5001"]
+        resources:
+          limits:
+            cpu: 400m
+            memory: 400Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+          - containerPort: 5001
+        env:
+        - name: "DATABASE_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "DATABASE_URL"
+              name: "flask-web-config-bx9q"
+        - name: "GOOGLE_APPLICATION_CREDENTIALS"
+          valueFrom:
+            configMapKeyRef:
+              key: "GOOGLE_APPLICATION_CREDENTIALS"
+              name: "flask-web-config-bx9q"
